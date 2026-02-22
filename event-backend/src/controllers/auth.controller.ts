@@ -1,18 +1,17 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { oauth2Client } from '../config/google';
 import { google } from 'googleapis';
 import { prisma } from '../lib/prisma';
-import { getUpcomingEvents } from '../services/googleCalendarService';
+import { getUpcomingEvents } from '../services/googleCalendar.service';
 import jwt from 'jsonwebtoken';
-const router = express.Router();
 
 const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.email',
   'https://www.googleapis.com/auth/calendar.readonly',
 ];
 
-// 1️⃣ Redirect to Google
-router.get('/google', (req, res) => {
+//re-direct to google auth
+export const googleAuth = (req: Request, res: Response, next: NextFunction) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline', // IMPORTANT
     prompt: 'consent', // IMPORTANT (to get refresh token)
@@ -20,10 +19,14 @@ router.get('/google', (req, res) => {
   });
 
   res.redirect(url);
-});
+};
 
-// 2️⃣ Handle callback
-router.get('/google/callback', async (req, res) => {
+//Handle Call-back
+export const googleCallback = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const code = req.query.code as string;
 
   if (!code) {
@@ -80,10 +83,14 @@ router.get('/google/callback', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Authentication failed' });
   }
-});
+};
 
-// 3️⃣ Test calendar events
-router.get('/calendar/test', async (req, res) => {
+// Test calendar events
+export const testCalender = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const user = await prisma.user.findFirst();
 
   if (!user?.refreshToken) {
@@ -92,6 +99,10 @@ router.get('/calendar/test', async (req, res) => {
 
   const events = await getUpcomingEvents(user.refreshToken);
   res.json(events);
-});
+};
 
-export default router;
+// Logout
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie('token');
+  res.redirect('/');
+};
