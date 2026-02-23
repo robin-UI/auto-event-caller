@@ -27,11 +27,11 @@ export default function Header({ user }: { user: User | null }) {
     // const data = await res.json();
     // if (res.ok) {
     //   window.location.href = data.redirect;
-    // }
+    // }The class `supports-[backdrop-filter]:bg-background/60` can be written as `supports-backdrop-filter:bg-background/60`
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         {/* Left – Title */}
         <span className="text-lg font-semibold tracking-tight">
