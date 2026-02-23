@@ -45,8 +45,8 @@ export default function DeletePhoneDialog({ onDone }: { onDone: () => void }) {
         <DialogHeader>
           <DialogTitle>Remove Phone Number</DialogTitle>
           <DialogDescription>
-            This will delete your saved phone number and you won't receive SMS
-            reminders for events anymore.
+            This will delete your saved phone number and you won&apos;t receive
+            SMS reminders for events anymore.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

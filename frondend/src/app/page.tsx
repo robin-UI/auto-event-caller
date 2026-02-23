@@ -147,8 +147,8 @@ export default function Home() {
               <CardHeader>
                 <CardTitle>Add Your Phone Number</CardTitle>
                 <CardDescription>
-                  We'll send you SMS reminders for your upcoming Google Calendar
-                  events.
+                  We&apos;ll send you SMS reminders for your upcoming Google
+                  Calendar events.
                 </CardDescription>
               </CardHeader>
               <CardContent>
