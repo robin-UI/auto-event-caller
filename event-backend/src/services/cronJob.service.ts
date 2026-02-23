@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { prisma } from '../lib/prisma';
+import User from '../models/User.models';
 import { google } from 'googleapis';
 import twilio from 'twilio';
 
@@ -12,7 +12,7 @@ const twilioClient = twilio(
 cron.schedule('* * * * *', async () => {
   console.log('Checking upcoming events...');
 
-  const users = await prisma.user.findMany();
+  const users = await User.find();
 
   for (const user of users) {
     if (!user.refreshToken) continue;

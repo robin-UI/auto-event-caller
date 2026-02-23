@@ -2,11 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { oauth2Client } from '../config/google';
 import { google } from 'googleapis';
 import { prisma } from '../lib/prisma';
+import User from '../models/User.models';
 import { getUpcomingEvents } from '../services/googleCalendar.service';
 import jwt from 'jsonwebtoken';
 
 const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/calendar.readonly',
 ];
 
@@ -46,23 +48,40 @@ export const googleCallback = async (
 
     const email = userInfo.data.email;
     const name = userInfo.data.name;
+    const picture = userInfo.data.picture;
 
     if (!email) {
       return res.status(400).json({ message: 'No email returned from Google' });
     }
 
     // 🔥 TODO: Save user + refresh_token in DB
-    const user = await prisma.user.upsert({
-      where: { email },
-      update: {
-        refreshToken: tokens.refresh_token!,
+    // const user = await prisma.user.upsert({
+    //   where: { email },
+    //   update: {
+    //     refreshToken: tokens.refresh_token!,
+    //   },
+    //   create: {
+    //     email,
+    //     name,
+    //     refreshToken: tokens.refresh_token!,
+    //   },
+    // });
+    const user = await User.findOneAndUpdate(
+      { email },
+      {
+        $set: { refreshToken: tokens.refresh_token! },
+        $setOnInsert: {
+          email,
+          name,
+          picture,
+        },
       },
-      create: {
-        email,
-        name,
-        refreshToken: tokens.refresh_token!,
+      {
+        upsert: true,
+        new: true,
+        runValidators: true, // enforce schema validation
       },
-    });
+    );
     // res.json({
     //   message: 'Login successful',
     //   email,
@@ -77,8 +96,7 @@ export const googleCallback = async (
       secure: false, // true in production (https)
       sameSite: 'lax',
     });
-    console.log(user);
-    res.redirect('http://localhost:3001');
+    res.redirect(process.env.FRONTEND_URL!);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Authentication failed' });
@@ -103,6 +121,11 @@ export const testCalender = async (
 
 // Logout
 export const logout = async (req: Request, res: Response) => {
-  res.clearCookie('token');
-  res.redirect('/');
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax', // must match how you set the cookie
+    path: '/',
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
 };

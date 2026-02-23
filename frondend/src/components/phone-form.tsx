@@ -18,12 +18,15 @@ function PhoneForm() {
     setMessage(null);
 
     try {
-      const res = await fetch("http://localhost:3000/user/phone", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // sends the httpOnly JWT cookie
-        body: JSON.stringify({ phoneNumber: value }),
-      });
+      const res = await fetch(
+        process.env.NEXT_PUBLIC_BASE_URL + "/user/phone",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // sends the httpOnly JWT cookie
+          body: JSON.stringify({ phoneNumber: value }),
+        },
+      );
 
       const data = await res.json();
 

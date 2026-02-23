@@ -20,7 +20,7 @@ export function LoginForm({
     try {
       // const response = await axios.get("http://localhost:3000/api/auth/google");
       // console.log(response.data);
-      window.location.href = "http://localhost:3000/auth/google";
+      window.location.href = process.env.NEXT_PUBLIC_BASE_URL + "/auth/google";
     } catch (error) {
       console.error(error);
     }

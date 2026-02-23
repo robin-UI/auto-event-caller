@@ -16,12 +16,12 @@ mission_test_webcastle/
 
 ## Backend — `event-backend`
 
-**Stack:** Node.js · Express · TypeScript · Prisma · PostgreSQL · JWT · Google OAuth · Twilio
+**Stack:** Node.js · Express · TypeScript · Mongoose · MongoDB · JWT · Google OAuth · Twilio
 
 ### Requirements
 
 - Node.js ≥ 18
-- PostgreSQL database
+- MongoDB database (local or Atlas)
 - A `.env` file (see below)
 
 ### Environment Variables
@@ -34,7 +34,8 @@ NODE_ENV=development
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_REDIRECT_URI=http://localhost:3000/auth/google/callback
-DATABASE_URL=postgresql://user:password@localhost:5432/your_db
+FRONTEND_URL=http://localhost:3001
+MONGODB_URI=mongodb://localhost:27017/your_db
 JWT_SECRET=your_jwt_secret
 TWILIO_ACCOUNT_SID=your_twilio_sid
 TWILIO_AUTH_TOKEN=your_twilio_auth_token
@@ -49,15 +50,8 @@ cd event-backend
 # Install dependencies
 npm install
 
-# Push database schema
-npx prisma db push
-
 # Start development server
 npm run dev
-
-# OR build and start for production
-npm run build
-npm start
 ```
 
 The backend runs on **http://localhost:3000** by default.
@@ -67,6 +61,14 @@ The backend runs on **http://localhost:3000** by default.
 ## Frontend — `frondend`
 
 **Stack:** Next.js 15 · React 19 · TypeScript · Tailwind CSS · shadcn/ui
+
+### Environment Variables
+
+Create a `.env.local` file inside `frondend/`:
+
+```env
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
 
 ### Setup & Start
 

@@ -1,43 +1,20 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/authMiddleware';
-import { prisma } from '../lib/prisma';
+import {
+  getMe,
+  savePhoneNumber,
+  upcomingEvents,
+  updatePhoneNumber,
+} from '../controllers/user.controller';
 
 const router = Router();
 
-router.post('/phone', authMiddleware, async (req, res) => {
-  const { phoneNumber } = req.body;
+router.post('/phone', authMiddleware, savePhoneNumber);
 
-  if (!phoneNumber) {
-    return res.status(400).json({ message: 'Phone number required' });
-  }
+router.post('/update-phone', authMiddleware, updatePhoneNumber);
 
-  if (!req?.user) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+router.get('/me', authMiddleware, getMe);
 
-  await prisma.user.update({
-    where: { id: req?.user?.userId },
-    data: { phoneNumber },
-  });
-
-  res.json({ message: 'Phone number saved successfully' });
-});
-
-router.get('/me', authMiddleware, async (req, res) => {
-  console.log(req.user);
-  if (!req?.user) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: req.user.userId },
-  });
-
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' });
-  }
-
-  res.json(user);
-});
+router.get('/upcoming-events', authMiddleware, upcomingEvents);
 
 export default router;

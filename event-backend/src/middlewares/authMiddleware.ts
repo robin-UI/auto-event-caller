@@ -21,8 +21,8 @@ export const authMiddleware = (
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as {
       userId: string;
     };
+    // console.log(req.user, 'Middleware Pass');
     req.user = decodedToken;
-    console.log(req.user, 'Middleware Pass');
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Unauthorized' });
