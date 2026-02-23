@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { oauth2Client } from '../config/google';
 import { google } from 'googleapis';
-import { prisma } from '../lib/prisma';
 import User from '../models/User.models';
 import { getUpcomingEvents } from '../services/googleCalendar.service';
 import jwt from 'jsonwebtoken';
@@ -109,7 +108,7 @@ export const testCalender = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const user = await prisma.user.findFirst();
+  const user = await User.findOne();
 
   if (!user?.refreshToken) {
     return res.status(400).json({ message: 'No refresh token found' });
