@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: 'http://localhost:3001', // your Next.js frontend
+    origin: process.env.FRONTEND_URL, // your Next.js frontend
     credentials: true, // allow cookies to be sent
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   }),
